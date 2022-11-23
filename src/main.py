@@ -9,7 +9,7 @@ async def free_kassa_notification(request: web.Request):
 
     # Список ip free-kassы на этой странице https://docs.freekassa.ru/#section/1.-Vvedenie/1.4.-Opoveshenie-o-platezhe
     allowed_ips = ["168.119.157.136", "168.119.60.227", "138.201.88.124", "178.154.197.79"]
-    if request.headers.get("cf-connecting-ip") not in allowed_ips:
+    if request.client.host not in allowed_ips:
         raise web.HTTPUnauthorized
 
     kwargs = {
