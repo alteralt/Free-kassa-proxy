@@ -1,12 +1,12 @@
-from typing import Optional
+import pydantic
 
-from pydantic import BaseSettings, HttpUrl
+from pydantic_settings import BaseSettings
 
 
 class Config(BaseSettings):
-    notification_url: HttpUrl
-    success_url: HttpUrl
-    failure_url: HttpUrl
+    notification_url: pydantic.HttpUrl
+    success_url: pydantic.HttpUrl
+    failure_url: pydantic.HttpUrl
 
     class Config:
         env_file = ".env"

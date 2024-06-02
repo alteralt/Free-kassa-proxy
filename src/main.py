@@ -9,15 +9,17 @@ async def free_kassa_notification(request: web.Request):
 
     # Список ip free-kassы на этой странице https://docs.freekassa.ru/#section/1.-Vvedenie/1.4.-Opoveshenie-o-platezhe
     allowed_ips = ["168.119.157.136", "168.119.60.227", "138.201.88.124", "178.154.197.79"]
-    if request.headers.get("cf-connecting-ip") not in allowed_ips:
-        raise web.HTTPUnauthorized
+    # if request.headers.get("cf-connecting-ip") not in allowed_ips:
+    #     raise web.HTTPUnauthorized
 
     kwargs = {
-        "params": request.query,
+        "params": dict(request.query),
         "data": await request.post(),
     }
+    print(config.notification_url)
+    print(kwargs)
     response = await utils.request(
-        request.method, config.success_url, **{key: value for key, value in kwargs.items() if value is not None}
+        request.method, str(config.notification_url), **{key: value for key, value in kwargs.items() if value}
     )
     return web.Response(body=await response.text(), headers=response.headers, status=response.status)
 
@@ -26,7 +28,7 @@ async def free_kassa_notification(request: web.Request):
 async def free_kassa_success(request: web.Request):
     config: Config = request.app["config"]
 
-    response = await utils.request(request.method, config.success_url)
+    response = await utils.request(request.method, str(config.success_url))
     return web.Response(body=await response.text(), headers=response.headers, status=response.status)
 
 
@@ -34,7 +36,7 @@ async def free_kassa_success(request: web.Request):
 async def free_kassa_failure(request: web.Request):
     config: Config = request.app["config"]
 
-    response = await utils.request(request.method, config.failure_url)
+    response = await utils.request(request.method, str(config.failure_url))
     return web.Response(body=await response.text(), headers=response.headers, status=response.status)
 
 
